@@ -1,7 +1,8 @@
 var GAME_SIZE = 30;
 var GAME_WIDTH = 515;
-var DEFAULT_COLOR = "green";
-var USER_COLOR = "blue";
+var DEFAULT_COLOR = "#1DB01D";
+var USER_COLOR = "#168484";
+var OPPONENT_COLOR = "#EB4E4E";
 
 init();
 
@@ -19,22 +20,39 @@ function createBoard(){
 }
 
 function setupNumbers(){
+  var numbers = [];
   $(".number").each(function(key, value){
+    numbers.push(value);
     $(value).mouseenter(function(){
-      $(this).css("background-color", USER_COLOR);
-      focusFactors($(this));
+      focusFactors($(this), numbers);
     });
 
     $(value).mouseleave(function(){
-      $(this).css("background-color", DEFAULT_COLOR);
+      unfocusFactors($(this), numbers);
     });
   });
 }
 
-function focusFactors(value){
+function focusFactors(value, arr){
   //calcualte the factors and hihglight opponent color
   var number = parseInt(value.text());
+  $(value).css("background", USER_COLOR);
+  for(var i = 1; i < number; i++){
+    if(number%i == 0){
+      $(arr[i-1]).css("background", OPPONENT_COLOR);
+    }
+  }
+}
 
+function unfocusFactors(value, arr){
+  //calcualte the factors and hihglight opponent color
+  var number = parseInt(value.text());
+  $(value).css("background", DEFAULT_COLOR);
+  for(var i = 1; i <= number; i++){
+    if(number%i == 0){
+      $(arr[i-1]).css("background", DEFAULT_COLOR);
+    }
+  }
 }
 
 function setWidth(){
