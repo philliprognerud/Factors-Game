@@ -21,10 +21,16 @@ function createBoard(){
 
 function setupNumbers(){
   var numbers = [];
+
   $(".number").each(function(key, value){
     numbers.push(value);
     $(value).mouseenter(function(){
       focusFactors($(this), numbers);
+    });
+
+    $(value).click(function(){
+      $(this).css("background", USER_COLOR);
+      $(this).addClass("clicked");
     });
 
     $(value).mouseleave(function(){
@@ -38,18 +44,22 @@ function focusFactors(value, arr){
   var number = parseInt(value.text());
   $(value).css("background", USER_COLOR);
   for(var i = 1; i < number; i++){
-    if(number%i == 0){
+    if(number%i == 0 && !$(arr[i-1]).hasClass("clicked")){
       $(arr[i-1]).css("background", OPPONENT_COLOR);
     }
   }
 }
 
-function unfocusFactors(value, arr){
+function unfocusFactors(value, arr, clicked){
   //calcualte the factors and hihglight opponent color
   var number = parseInt(value.text());
-  $(value).css("background", DEFAULT_COLOR);
-  for(var i = 1; i <= number; i++){
-    if(number%i == 0){
+
+  if(!$(value).hasClass("clicked")){
+    $(value).css("background", DEFAULT_COLOR);
+  }
+
+  for(var i = 1; i < number; i++){
+    if(number%i == 0 && !$(arr[i-1]).hasClass("clicked")){
       $(arr[i-1]).css("background", DEFAULT_COLOR);
     }
   }
