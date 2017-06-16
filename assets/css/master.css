@@ -1,0 +1,42 @@
+body{
+  margin: 0;
+  padding: 0;
+  background-color: #232323;
+  font-family: "Avenir", sans-serif;
+}
+
+h1 {
+  color: white;
+  text-align: center;
+}
+
+h2 {
+  margin: 0;
+  padding: 0;
+  display: inline-block;
+  height: 100%;
+  width: 40%;
+}
+
+.score {
+  background-color: white;
+  height: 30px;
+  text-align: center;
+  text-transform: uppercase;
+  margin: 0 auto;
+}
+
+.game {
+  margin: 30px auto;
+}
+
+.number {
+  background: green;
+  width: 100px;
+  height: 100px;
+  margin: 1.5px;
+  line-height: 100px;
+  text-align: center;
+  float: left;
+  color: white;
+}
