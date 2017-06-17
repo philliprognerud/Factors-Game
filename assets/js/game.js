@@ -121,7 +121,7 @@ function focusFactors(value, arr, opponent){
     //calcualte the factors and hihglight opponent color
     var number = parseInt(value.text());
 
-    if(!opponent){
+    if(!opponent && !$(value).hasClass("opponent")){
       $(value).css("background", USER_COLOR);
     } else {
       $(value).css("background", OPPONENT_COLOR);
