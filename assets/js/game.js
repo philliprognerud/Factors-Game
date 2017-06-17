@@ -15,7 +15,7 @@ function init(){
 
 function createBoard(){
   for(var i = 0; i < GAME_SIZE; i++){
-    $(".game").append("<div class='number'>" + (i+1) + "</div>");
+    $(".game").append("<div class='number fadein'>" + (i+1) + "</div>");
   }
 }
 
@@ -29,8 +29,20 @@ function setupNumbers(){
     });
 
     $(value).click(function(){
-      $(this).css("background", USER_COLOR);
-      $(this).addClass("clicked");
+      if(!$(this).hasClass("clicked")){
+        $(this).css("background", USER_COLOR);
+        $(this).addClass("clicked");
+
+        if(!$(this).hasClass("scoreAdded")){
+          var currentScore = parseInt($("#mypt").text());
+          var numberToAdd = parseInt($(this).text())
+          $("#mypt").text(currentScore + numberToAdd);
+        }
+
+        console.log(numbers);
+        opponentTurn(numbers);
+        console.log(numbers);
+      }
     });
 
     $(value).mouseleave(function(){
@@ -39,30 +51,76 @@ function setupNumbers(){
   });
 }
 
-function focusFactors(value, arr){
-  //calcualte the factors and hihglight opponent color
-  var number = parseInt(value.text());
-  $(value).css("background", USER_COLOR);
-  for(var i = 1; i < number; i++){
-    if(number%i == 0 && !$(arr[i-1]).hasClass("clicked")){
-      $(arr[i-1]).css("background", OPPONENT_COLOR);
+function opponentTurn(arr){
+  var newArr = arr.map(function(item){
+    if(!$(item).hasClass("clicked")){
+      return $(item).text();
     }
-  }
+  });
+
+  console.log(newArr);
+
+  newArr = newArr.filter(function(element) {
+    return element !== undefined;
+  }).reverse();
+
+  // console.log(newArr);
+
+  var bestChoice = 0;
+  var bestIndex;
+  newArr.forEach(function(number, index){
+    for(var i = 0; i < index; i++){
+      if(number%newArr[i] == 0){
+        var temp = number - newArr[i];
+        if(temp > bestChoice){
+          bestChoice = temp;
+          bestIndex = i;
+        }
+      }
+    }
+  });
+
+  // console.log(bestChoice);
+  // console.log(bestIndex);
+  // console.log(newArr[bestIndex]);
 }
 
-function unfocusFactors(value, arr, clicked){
-  //calcualte the factors and hihglight opponent color
-  var number = parseInt(value.text());
+function focusFactors(value, arr){
+  setTimeout(function(){
+    //calcualte the factors and hihglight opponent color
+    var number = parseInt(value.text());
+    var clicked = $(value).hasClass("clicked");
 
-  if(!$(value).hasClass("clicked")){
-    $(value).css("background", DEFAULT_COLOR);
-  }
-
-  for(var i = 1; i < number; i++){
-    if(number%i == 0 && !$(arr[i-1]).hasClass("clicked")){
-      $(arr[i-1]).css("background", DEFAULT_COLOR);
+    if(!clicked){
+      $(value).css("background", USER_COLOR);
     }
-  }
+
+    for(var i = 1; i < number; i++){
+      if(number%i == 0 && !$(arr[i-1]).hasClass("clicked")){
+        $(arr[i-1]).css("background", OPPONENT_COLOR);
+      }
+    }
+  }, 150);
+}
+
+function unfocusFactors(value, arr){
+  //calcualte the factors and hihglight opponent color
+  setTimeout(function(){
+    var number = parseInt(value.text());
+    var clicked = $(value).hasClass("clicked");
+
+    if(!clicked){
+      $(value).css("background", DEFAULT_COLOR);
+    }
+
+    for(var i = 1; i < number; i++){
+      if(number%i == 0 && !clicked && !$(arr[i-1]).hasClass("clicked")){
+        $(arr[i-1]).css("background", DEFAULT_COLOR);
+      } else if (number%i == 0 && clicked){
+        $(arr[i-1]).addClass("clicked");
+      }
+    }
+  }, 150);
 }
 
 function setWidth(){
