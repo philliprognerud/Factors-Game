@@ -104,17 +104,16 @@ function opponentTurn(arr){
 }
 
 function opponentMove(arr, index){
+    setTimeout(function(){
+      focusFactors($(arr[index]), arr, true);
+      calculateFactors(parseInt($(arr[index]).text()), arr, true);
 
-
-    focusFactors($(arr[index]), arr, true);
-    calculateFactors(parseInt($(arr[index]).text()), arr, true);
-
-    //
-    // if(!$(arr[index]).hasClass("scoreAdded")){
-    //   var currentScore = parseInt($("#aipt").text());
-    //   var numberToAdd = parseInt($(arr2[index]).text());
-    //   $("#aipt").text(currentScore + numberToAdd);
-    // }
+      if(!$(arr[index]).hasClass("scoreAdded")){
+        var currentScore = parseInt($("#aipt").text());
+        var numberToAdd = parseInt($(arr[index]).text());
+        $("#aipt").text(currentScore + numberToAdd);
+      }
+    }, 2000);
 }
 
 function focusFactors(value, arr, opponent){
