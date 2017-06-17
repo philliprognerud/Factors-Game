@@ -25,7 +25,7 @@ function setupNumbers(){
   $(".number").each(function(key, value){
     numbers.push(value);
     $(value).mouseenter(function(){
-      focusFactors($(this), numbers);
+      focusFactors($(this), numbers, false);
     });
 
     $(value).click(function(){
@@ -33,15 +33,14 @@ function setupNumbers(){
         $(this).css("background", USER_COLOR);
         $(this).addClass("clicked");
 
+        calculateFactors(parseInt($(this).text()), numbers, false);
+
         if(!$(this).hasClass("scoreAdded")){
           var currentScore = parseInt($("#mypt").text());
           var numberToAdd = parseInt($(this).text())
           $("#mypt").text(currentScore + numberToAdd);
+          opponentTurn(numbers);
         }
-
-        console.log(numbers);
-        opponentTurn(numbers);
-        console.log(numbers);
       }
     });
 
@@ -49,6 +48,18 @@ function setupNumbers(){
       unfocusFactors($(this), numbers);
     });
   });
+
+}
+
+function calculateFactors(number, arr, opponent){
+  for(var i = 1; i <= arr.length; i++){
+    if(number%i == 0 && !opponent){
+      $(arr[i-1]).addClass("clicked");
+    } else if (number%i == 0 && opponent && !$(arr[i-1]).hasClass("clicked")) {
+      $(arr[i-1]).addClass("clicked");
+      $(arr[i-1]).addClass("opponent");
+    }
+  }
 }
 
 function opponentTurn(arr){
@@ -56,51 +67,78 @@ function opponentTurn(arr){
     if(!$(item).hasClass("clicked")){
       return $(item).text();
     }
-  });
-
-  console.log(newArr);
-
-  newArr = newArr.filter(function(element) {
-    return element !== undefined;
   }).reverse();
 
-  // console.log(newArr);
 
+  var factorsAdded = 0;
   var bestChoice = 0;
-  var bestIndex;
+  var bestIndex = 0;
   newArr.forEach(function(number, index){
-    for(var i = 0; i < index; i++){
-      if(number%newArr[i] == 0){
-        var temp = number - newArr[i];
-        if(temp > bestChoice){
-          bestChoice = temp;
-          bestIndex = i;
+    for(var x = 0; x < newArr.length; x++){
+      var intNum1 = parseInt(number);
+      var intNum2 = parseInt(newArr[x]);
+      var netDifference = 0;
+
+      if(intNum1 % intNum2 == 0 && intNum2 !== intNum1){
+        factorsAdded += intNum2;
+      }
+
+      if(x === newArr.length-1){
+        netDifference = intNum1 - factorsAdded;
+
+        if(netDifference > bestChoice){
+          bestChoice = netDifference;
+          bestIndex = index;
         }
       }
     }
+
+    factorsAdded = 0;
+    netDifference = 0;
   });
 
+  // console.log(newArr);
   // console.log(bestChoice);
   // console.log(bestIndex);
-  // console.log(newArr[bestIndex]);
+  opponentMove(arr, arr.length-bestIndex-1);
 }
 
-function focusFactors(value, arr){
+function opponentMove(arr, index){
+
+
+    focusFactors($(arr[index]), arr, true);
+    calculateFactors(parseInt($(arr[index]).text()), arr, true);
+
+    //
+    // if(!$(arr[index]).hasClass("scoreAdded")){
+    //   var currentScore = parseInt($("#aipt").text());
+    //   var numberToAdd = parseInt($(arr2[index]).text());
+    //   $("#aipt").text(currentScore + numberToAdd);
+    // }
+}
+
+function focusFactors(value, arr, opponent){
   setTimeout(function(){
     //calcualte the factors and hihglight opponent color
     var number = parseInt(value.text());
-    var clicked = $(value).hasClass("clicked");
 
-    if(!clicked){
+    if(!opponent){
       $(value).css("background", USER_COLOR);
+    } else {
+      $(value).css("background", OPPONENT_COLOR);
     }
 
-    for(var i = 1; i < number; i++){
-      if(number%i == 0 && !$(arr[i-1]).hasClass("clicked")){
-        $(arr[i-1]).css("background", OPPONENT_COLOR);
+    for(var i = 0; i < number-1; i++){
+      var temp = parseInt($(arr[i]).text());
+      if(number%temp == 0 && !$(arr[i]).hasClass("clicked") && !opponent){
+        $(arr[i]).css("background", OPPONENT_COLOR);
+      } else if (number%temp == 0 && $(arr[i]).hasClass("opponent") && opponent) {
+        $(arr[i]).css("background", USER_COLOR);
       }
     }
   }, 150);
+
+  return arr;
 }
 
 function unfocusFactors(value, arr){
@@ -121,6 +159,8 @@ function unfocusFactors(value, arr){
       }
     }
   }, 150);
+
+  return arr;
 }
 
 function setWidth(){
