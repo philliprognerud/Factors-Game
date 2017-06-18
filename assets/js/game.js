@@ -10,6 +10,7 @@ var OPPONENT_COLOR = "#EB4E4E";
 
 var myScore = 0;
 var aiScore = 0;
+var gameEnd = 0; //over once == arr.length
 
 init();
 
@@ -31,14 +32,33 @@ function addGameListeners(){
 
       } else if(event.type === "click"){
           $(this).css({"background": USER_COLOR}).addClass("clicked").off('mouseenter mouseleave click');
+          gameOver(arr);
           myScore += parseInt($(this).text())
           highlightFactors(arr, $(this), true, false);
           updateScores();
           $("#status").text("ai turn...");
+          toggleUserclick(false);
           aiTurn(arr);
       }
     }
   });
+}
+
+function toggleUserclick(toggle){
+  if(!toggle){
+    $("body").append("<div class='overlay'></div>");
+  } else {
+    $("div").remove(".overlay");
+  }
+}
+
+function gameOver(arr){
+  if(gameEnd < arr.length){
+    gameEnd += 1;
+  } else if(gameEnd === arr.length){
+    $("#status").text("GAME OVER!")
+  }
+
 }
 
 function aiTurn(numbers){
@@ -65,13 +85,14 @@ function aiTurn(numbers){
     }
   });
 
-
+  gameOver(numbers);
   setTimeout(function(){
     $(numbers[bestIndex]).css({"background": OPPONENT_COLOR}).addClass("clicked");
     highlightFactors(numbers, $(numbers[bestIndex]), true, true);
     aiScore += parseInt($(numbers[bestIndex]).text());
     updateScores();
     $("#status").text("your turn!");
+    toggleUserclick(true);
   }, 2500);
 }
 
@@ -99,9 +120,11 @@ function highlightFactors(arr, number, clicked, ai){
         if(!ai){
           $(arr[i]).css({"background": OPPONENT_COLOR}).addClass("clicked").off('mouseenter mouseleave click');
           aiScore += parseInt($(arr[i]).text());
+          gameOver(arr);
         } else {
           $(arr[i]).css({"background": USER_COLOR}).addClass("clicked").off('mouseenter mouseleave click');
           myScore += parseInt($(arr[i]).text());
+          gameOver(arr);
         }
 
       } else if(!$(arr[i]).hasClass("clicked")) {
@@ -114,7 +137,7 @@ function highlightFactors(arr, number, clicked, ai){
 function createBoard(){
   for(var i = 0; i < GAME_SIZE; i++){
     $(".game").append("<div class='number fadein'>" + (i+1) + "</div>");
-    $(".number").css({"background": DEFAULT_COLOR});
+    $(".number").css({"background": DEFAULT_COLOR, "cursor": "pointer"});
   }
   setHeight();
   setWidth();
