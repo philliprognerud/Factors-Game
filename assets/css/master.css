@@ -56,10 +56,6 @@ h2 {
   box-sizing: border-box;
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
-  background: #1DB01D;
-  width: 100px;
-  height: 100px;
-  margin: 1.5px;
   line-height: 100px;
   text-align: center;
   float: left;
