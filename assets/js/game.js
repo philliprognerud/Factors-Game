@@ -52,12 +52,17 @@ function setupNumbers(){
 }
 
 function calculateFactors(number, arr, opponent){
-  for(var i = 1; i <= arr.length; i++){
-    if(number%i == 0 && !opponent){
-      $(arr[i-1]).addClass("clicked");
-    } else if (number%i == 0 && opponent && !$(arr[i-1]).hasClass("clicked")) {
-      $(arr[i-1]).addClass("clicked");
-      $(arr[i-1]).addClass("opponent");
+
+  for(var i = 0; i < number-1; i++){
+    var temp = parseInt($(arr[i]).text());
+    if(number%temp == 0 && !opponent && !$(arr[i]).hasClass("oponnent2")){
+      addToScore(arr, true, i);
+      $(arr[i]).addClass("clicked");
+      $(arr[i]).addClass("opponent2");
+    } else if (number%temp == 0 && opponent && !$(arr[i]).hasClass("opponent")) {
+      addToScore(arr, false, i);
+      $(arr[i]).addClass("clicked");
+      $(arr[i]).addClass("opponent");
     }
   }
 }
@@ -69,7 +74,7 @@ function opponentTurn(arr){
     }
   }).reverse();
 
-
+  console.log(arr);
   var factorsAdded = 0;
   var bestChoice = 0;
   var bestIndex = 0;
@@ -97,9 +102,6 @@ function opponentTurn(arr){
     netDifference = 0;
   });
 
-  // console.log(newArr);
-  // console.log(bestChoice);
-  // console.log(bestIndex);
   opponentMove(arr, arr.length-bestIndex-1);
 }
 
@@ -108,12 +110,21 @@ function opponentMove(arr, index){
       focusFactors($(arr[index]), arr, true);
       calculateFactors(parseInt($(arr[index]).text()), arr, true);
 
-      if(!$(arr[index]).hasClass("scoreAdded")){
-        var currentScore = parseInt($("#aipt").text());
-        var numberToAdd = parseInt($(arr[index]).text());
-        $("#aipt").text(currentScore + numberToAdd);
-      }
+      addToScore(arr, true, index);
+
     }, 2000);
+}
+
+function addToScore(arr, opponent, index){
+  if(!$(arr[index]).hasClass("opponent") && opponent && !$(arr[index]).hasClass("clicked")){
+    var currentScore = parseInt($("#aipt").text());
+    var numberToAdd = parseInt($(arr[index]).text());
+    $("#aipt").text(currentScore + numberToAdd);
+  } else if (!$(arr[index]).hasClass("opponent2") && !opponent  && !$(arr[index]).hasClass("clicked")) {
+    var currentScore = parseInt($("#mypt").text());
+    var numberToAdd = parseInt($(arr[index]).text());
+    $("#mypt").text(currentScore + numberToAdd);
+  }
 }
 
 function focusFactors(value, arr, opponent){
@@ -121,7 +132,7 @@ function focusFactors(value, arr, opponent){
     //calcualte the factors and hihglight opponent color
     var number = parseInt(value.text());
 
-    if(!opponent && !$(value).hasClass("opponent")){
+    if(!opponent && !$(value).hasClass("opponent") && !$(value).hasClass("opponent2")){
       $(value).css("background", USER_COLOR);
     } else {
       $(value).css("background", OPPONENT_COLOR);
