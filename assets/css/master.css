@@ -19,6 +19,7 @@ h1 {
   text-align: center;
   text-transform: uppercase;
   font-size: 28px;
+  margin: 0 auto;
 }
 
 h2 {
@@ -34,7 +35,7 @@ h2 {
 .stripe {
   background:white;
   height: 50px;
-  margin: 0 auto;
+  margin: 30px auto;
   line-height:50px;
   box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
 }
@@ -63,13 +64,14 @@ h2 {
   box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
 }
 
-.number:hover{
+.clicked {
   border: 2px solid rgb(255, 255, 255);
 }
 
-.fadein {
-  transition:  0.05s;
+.number:hover{
+
 }
+
 
 #myscore {
   float: left;
@@ -91,4 +93,12 @@ h2 {
   color: #EB4E4E;
   width:20%;
   float: left;
+}
+
+#status {
+  display: inline-block;
+  text-align: center;
+  width: 20%;
+  text-transform: lowercase;
+  font-size: 15px;
 }

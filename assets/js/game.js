@@ -23,7 +23,7 @@ function addGameListeners(){
     if(!$(this).hasClass("clicked")){
       if(event.type === "mouseenter"){
           $(this).css({"background": USER_COLOR});
-          highlightFactors(arr, $(this), false);
+          highlightFactors(arr, $(this), false, false);
 
       } else if(event.type === "mouseleave"){
           $(this).css({"background": DEFAULT_COLOR});
@@ -32,11 +32,47 @@ function addGameListeners(){
       } else if(event.type === "click"){
           $(this).css({"background": USER_COLOR}).addClass("clicked").off('mouseenter mouseleave click');
           myScore += parseInt($(this).text())
-          highlightFactors(arr, $(this), true);
+          highlightFactors(arr, $(this), true, false);
           updateScores();
+          $("#status").text("ai turn...");
+          aiTurn(arr);
       }
     }
   });
+}
+
+function aiTurn(numbers){
+  var highest = 0;
+  var bestIndex = 0;
+
+  $(numbers).each(function(index, number){
+    if(!$(number).hasClass("clicked")){
+      var n = parseInt($(number).text());
+      var factorsAdded = 0;
+      for(var i = 0; i < n-1; i++){
+        if(n % parseInt($(numbers[i]).text()) == 0 && !$(numbers[i]).hasClass("clicked")){
+          factorsAdded += parseInt($(numbers[i]).text());
+        }
+
+        if(i === n-2){
+          var temp = n - factorsAdded;
+          if(temp > highest){
+            highest = temp;
+            bestIndex = index;
+          }
+        }
+      }
+    }
+  });
+
+
+  setTimeout(function(){
+    $(numbers[bestIndex]).css({"background": OPPONENT_COLOR}).addClass("clicked");
+    highlightFactors(numbers, $(numbers[bestIndex]), true, true);
+    aiScore += parseInt($(numbers[bestIndex]).text());
+    updateScores();
+    $("#status").text("your turn!");
+  }, 2500);
 }
 
 function updateScores(){
@@ -55,14 +91,20 @@ function unhighlightFactors(arr, number){
   }
 }
 
-function highlightFactors(arr, number, clicked){
+function highlightFactors(arr, number, clicked, ai){
   var n = parseInt(number.text());
   for(var i = 0; i < n-1; i++){
     if(n % parseInt($(arr[i]).text()) == 0){
       if(!$(arr[i]).hasClass("clicked") && clicked){
-        $(arr[i]).css({"background": OPPONENT_COLOR}).addClass("clicked").off('mouseenter mouseleave click');
-        aiScore += parseInt($(arr[i]).text());
-      } else {
+        if(!ai){
+          $(arr[i]).css({"background": OPPONENT_COLOR}).addClass("clicked").off('mouseenter mouseleave click');
+          aiScore += parseInt($(arr[i]).text());
+        } else {
+          $(arr[i]).css({"background": USER_COLOR}).addClass("clicked").off('mouseenter mouseleave click');
+          myScore += parseInt($(arr[i]).text());
+        }
+
+      } else if(!$(arr[i]).hasClass("clicked")) {
         $(arr[i]).css({"background": OPPONENT_COLOR});
       }
     }
@@ -76,6 +118,7 @@ function createBoard(){
   }
   setHeight();
   setWidth();
+  $("#status").text("your turn!");
 }
 
 
@@ -83,6 +126,7 @@ function createBoard(){
 function setWidth(){
   $(".game").width(GAME_WIDTH);
   $(".score").width(GAME_WIDTH);
+  $("h1, .stripe").width(GAME_WIDTH);
   $(".number").css({
     "width": SQUARE_DIMENSION,
     "height": SQUARE_DIMENSION,
