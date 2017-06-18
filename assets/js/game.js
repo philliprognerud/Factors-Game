@@ -20,25 +20,28 @@ function init(){
 
 function addGameListeners(){
   var arr = $(".number").on("mouseenter mouseleave click", function(event){
-    if(event.type === "mouseenter"){
-      if(!$(this).hasClass("clicked")){
-        $(this).css({"background": USER_COLOR});
-        highlightFactors(arr, $(this), false);
-      }
+    if(!$(this).hasClass("clicked")){
+      if(event.type === "mouseenter"){
+          $(this).css({"background": USER_COLOR});
+          highlightFactors(arr, $(this), false);
 
-    } else if(event.type === "mouseleave"){
-      if(!$(this).hasClass("clicked")){
-        $(this).css({"background": DEFAULT_COLOR});
-        unhighlightFactors(arr, $(this));
-      }
+      } else if(event.type === "mouseleave"){
+          $(this).css({"background": DEFAULT_COLOR});
+          unhighlightFactors(arr, $(this));
 
-    } else if(event.type === "click"){
-      if(!$(this).hasClass("clicked")){
-        $(this).css({"background": USER_COLOR}).addClass("clicked").off('mouseenter mouseleave click');
-        highlightFactors(arr, $(this), true);
+      } else if(event.type === "click"){
+          $(this).css({"background": USER_COLOR}).addClass("clicked").off('mouseenter mouseleave click');
+          myScore += parseInt($(this).text())
+          highlightFactors(arr, $(this), true);
+          updateScores();
       }
     }
   });
+}
+
+function updateScores(){
+  $("#mypt").text(myScore);
+  $("#aipt").text(aiScore);
 }
 
 function unhighlightFactors(arr, number){
@@ -58,6 +61,7 @@ function highlightFactors(arr, number, clicked){
     if(n % parseInt($(arr[i]).text()) == 0){
       if(!$(arr[i]).hasClass("clicked") && clicked){
         $(arr[i]).css({"background": OPPONENT_COLOR}).addClass("clicked").off('mouseenter mouseleave click');
+        aiScore += parseInt($(arr[i]).text());
       } else {
         $(arr[i]).css({"background": OPPONENT_COLOR});
       }
